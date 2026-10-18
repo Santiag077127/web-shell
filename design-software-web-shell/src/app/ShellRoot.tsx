@@ -86,7 +86,11 @@ export const ShellRoot = ({
           {...(notificationDataSource === undefined ? {} : { notificationDataSource })}
         >
           {isOnline ? null : <OfflineBanner />}
-          <RemoteRoutes registry={remoteRegistry} manifestSource={manifestSource} />
+          <RemoteRoutes
+            registry={remoteRegistry}
+            manifestSource={manifestSource}
+            permissions={state.user.features}
+          />
         </AppShell>
       )}
     </RequireSession>

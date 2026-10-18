@@ -4,10 +4,12 @@ import { REMOTE_DEFINITIONS, type RemoteRegistry } from './remote-registry';
 import { RemoteBoundary } from './RemoteBoundary';
 import { RemoteUnavailable } from '../components/RemoteUnavailable/RemoteUnavailable';
 import { RemoteIndex } from '../components/RemoteIndex/RemoteIndex';
+import { HttpClient } from '@sena/frontend-platform';
 
 export interface RemoteRoutesProps {
   registry: RemoteRegistry;
   manifestSource?: string;
+  permissions?: readonly string[];
 }
 
 interface ShellHttpRequest {
@@ -42,6 +44,14 @@ const shellHttpClient = {
   },
 };
 
+const referenceDataHttpClient = new HttpClient({
+  baseUrl: '/api/v1/reference-data',
+  tokenProvider: {
+    getAccessToken: () => sessionStorage.getItem('sena.access_token'),
+    clear: () => sessionStorage.removeItem('sena.access_token'),
+  },
+});
+
 const monitoringCatalogs = {
   kpiTypes: [
     { id: 'mock-kpi-attendance', code: 'ATTENDANCE', name: 'Asistencia', description: 'Porcentaje de asistencia de la ficha.', unit: 'PERCENTAGE', is_active: true },
@@ -55,7 +65,13 @@ const monitoringCatalogs = {
   ],
 };
 
-function getRemoteProps(definition: (typeof REMOTE_DEFINITIONS)[number]): Record<string, unknown> {
+function getRemoteProps(
+  definition: (typeof REMOTE_DEFINITIONS)[number],
+  permissions: readonly string[],
+): Record<string, unknown> {
+  if (definition.domain === 'reference-data') {
+    return { basePath: definition.basePath, httpClient: referenceDataHttpClient, permissions };
+  }
   if (definition.domain !== 'monitoring') return { basePath: definition.basePath };
 
   return {
@@ -83,7 +99,7 @@ function getRemoteProps(definition: (typeof REMOTE_DEFINITIONS)[number]): Record
  * Cuando el ambiente no declara URLs en `remotes.<env>.json`, los dominios no montan y
  * se muestra `RemoteUnavailable` en vez de una pantalla vacía.
  */
-export const RemoteRoutes = ({ registry, manifestSource }: RemoteRoutesProps) => {
+export const RemoteRoutes = ({ registry, manifestSource, permissions = [] }: RemoteRoutesProps) => {
   const { pathname } = useLocation();
 
   return (
@@ -111,7 +127,7 @@ export const RemoteRoutes = ({ registry, manifestSource }: RemoteRoutesProps) =>
             path={`${definition.basePath}/*`}
             element={
               <RemoteBoundary domain={definition.domain} resetKey={definition.basePath}>
-                <Remote {...getRemoteProps(definition)} />
+                <Remote {...getRemoteProps(definition, permissions)} />
               </RemoteBoundary>
             }
           />
