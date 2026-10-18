@@ -45,6 +45,15 @@ export const useCurrentUser = (dataSource: SessionDataSource): UseCurrentUserRes
     void load();
   }, [load]);
 
+  useEffect(() => {
+    const onSessionChanged = () => {
+      void load();
+    };
+
+    window.addEventListener('sena:session-changed', onSessionChanged);
+    return () => window.removeEventListener('sena:session-changed', onSessionChanged);
+  }, [load]);
+
   const logout = useCallback(async (): Promise<void> => {
     await dataSource.logout();
     setState({ status: 'unauthenticated', user: null, error: null });

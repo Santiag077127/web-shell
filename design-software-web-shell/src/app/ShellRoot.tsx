@@ -10,6 +10,7 @@ import { RemoteRoutes } from '../shell/remote/RemoteRoutes';
 import { RequireSession } from '../shell/guards/RequireSession';
 import { OfflineBanner } from '../shell/components/OfflineBanner';
 import { useOnlineStatus } from '../shell/hooks/use-online-status';
+import { RemoteBoundary } from '../shell/remote/RemoteBoundary';
 
 export interface ShellRootProps {
   dataSource: SessionDataSource;
@@ -43,6 +44,7 @@ export const ShellRoot = ({
   const onNavigate = useCallback((next: string) => navigate(next), [navigate]);
 
   const isOnline = useOnlineStatus();
+  const LoginRemote = remoteRegistry.get('iam');
 
   useEffect(() => {
     if (state.status === 'authenticated' && pathname === '/login') {
@@ -57,6 +59,14 @@ export const ShellRoot = ({
 
   if (state.status === 'loading') {
     return <div role="status">Cargando sesion...</div>;
+  }
+
+  if (pathname === '/login') {
+    return (
+      <RemoteBoundary domain="iam" resetKey="/login">
+        <LoginRemote basePath="/iam" />
+      </RemoteBoundary>
+    );
   }
 
   if (state.status === 'error') {

@@ -125,26 +125,30 @@ export default defineConfig(({ mode }) => {
       alias: {
         ...(useStubs ? stubAliasRecord() : {}),
         '@sena/frontend-platform': fileURLToPath(
-          new URL('../design-software-frontend-platform/src/index.ts', import.meta.url),
+          new URL('../../platform/design-software-frontend-platform/src/index.ts', import.meta.url),
         ),
         // HU-SHELL-005: el shell consume los tokens canonicos de `design-system`.
         // El alias especifico va PRIMERO: Vite resuelve en orden y el alias corto
         // capturaria `@sena/design-system/tokens.css` contra el entry TS.
         '@sena/design-system/tokens.css': fileURLToPath(
-          new URL('../design-software-design-system/src/tokens/tokens.generated.css', import.meta.url),
+          new URL('../../system/design-software-design-system/src/tokens/tokens.generated.css', import.meta.url),
         ),
         // HU-SHELL-006: los Web Components base. Tambien antes del alias corto.
         '@sena/design-system/components': fileURLToPath(
-          new URL('../design-software-design-system/src/components/index.ts', import.meta.url),
+          new URL('../../system/design-software-design-system/src/components/index.ts', import.meta.url),
         ),
         '@sena/design-system': fileURLToPath(
-          new URL('../design-software-design-system/src/index.ts', import.meta.url),
+          new URL('../../system/design-software-design-system/src/index.ts', import.meta.url),
         ),
       },
     },
     server: {
       port: 5000,
       proxy: {
+        '/api/v1/auth': {
+          target: 'http://localhost:8081',
+          changeOrigin: true,
+        },
         '/api/v1': {
           target: 'http://localhost:8080',
           changeOrigin: true,

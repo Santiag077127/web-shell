@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@module-federation/runtime": "^2.9.2",
-    "@sena/design-system": "file:../design-software-design-system",
-    "@sena/frontend-platform": "file:../design-software-frontend-platform",
+    "@sena/design-system": "file:../../system/design-software-design-system",
+    "@sena/frontend-platform": "file:../../platform/design-software-frontend-platform",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.1"

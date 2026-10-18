@@ -5,7 +5,10 @@ import { describe, expect, it } from 'vitest';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SHELL_TOKENS = resolve(HERE, '../styles/tokens.css');
-const DESIGN_SYSTEM_CSS = resolve(HERE, '../../../design-software-design-system/src/tokens/tokens.generated.css');
+const DESIGN_SYSTEM_CSS = resolve(
+  HERE,
+  '../../../../system/design-software-design-system/src/tokens/tokens.generated.css',
+);
 
 const read = (path: string): string => readFileSync(path, 'utf8');
 
