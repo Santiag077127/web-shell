@@ -145,6 +145,11 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5000,
       proxy: {
+        '/api/v1/reference-data': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/v1\/reference-data/, ''),
+        },
         '/api/v1/auth': {
           target: 'http://localhost:8081',
           changeOrigin: true,
